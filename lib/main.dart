@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/constants/app_routes.dart';
 import 'core/constants/app_theme.dart';
@@ -10,6 +11,7 @@ import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/register_screen.dart';
 import 'features/categories/data/repositories/category_repository.dart';
+import 'features/expenses/data/repositories/expense_repository.dart';
 import 'features/shell/presentation/screens/shell_screen.dart';
 import 'features/shell/presentation/screens/splash_screen.dart';
 
@@ -30,6 +32,14 @@ Future<void> main() async {
     statusBarIconBrightness: Brightness.light,
   ));
 
+  // Initialize Hive
+  try {
+    await Hive.initFlutter();
+    await Hive.openBox('pending_expenses');
+  } catch (e) {
+    debugPrint('Hive init failed: $e');
+  }
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -49,6 +59,7 @@ class MasroufiApp extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(create: (_) => CategoryRepository()),
+        RepositoryProvider(create: (_) => ExpenseRepository()),
         RepositoryProvider(
           create: (ctx) => AuthRepository(
             categoryRepository: ctx.read<CategoryRepository>(),
