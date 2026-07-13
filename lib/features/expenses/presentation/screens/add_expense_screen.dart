@@ -9,12 +9,20 @@ import 'package:masroufi/features/auth/presentation/cubit/auth_state.dart';
 import 'package:masroufi/features/categories/data/models/category_model.dart';
 import 'package:masroufi/features/categories/data/repositories/category_repository.dart';
 import 'package:masroufi/features/expenses/data/repositories/expense_repository.dart';
+import 'package:masroufi/features/expenses/data/models/expense_model.dart';
 import 'package:masroufi/features/expenses/presentation/cubit/add_expense_cubit.dart';
 import 'package:masroufi/features/expenses/presentation/cubit/add_expense_state.dart';
 import 'package:masroufi/shared/widgets/app_widgets.dart';
 
 class AddExpenseScreen extends StatefulWidget {
-  const AddExpenseScreen({super.key});
+  final ExpenseModel? expense;
+  final CategoryModel? category;
+
+  const AddExpenseScreen({
+    super.key,
+    this.expense,
+    this.category,
+  });
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -26,6 +34,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _noteController = TextEditingController();
   final _amountFocus = FocusNode();
   final _noteFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.expense != null) {
+      _amountController.text = widget.expense!.amount.toStringAsFixed(2);
+      _noteController.text = widget.expense!.note ?? '';
+    }
+  }
 
   @override
   void dispose() {
@@ -42,10 +59,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final uid = authState is AuthAuthenticated ? authState.user.uid : '';
 
     return BlocProvider(
-      create: (context) => AddExpenseCubit(
-        expenseRepository: context.read<ExpenseRepository>(),
-        authRepository: context.read<AuthRepository>(),
-      ),
+      create: (context) {
+        final cubit = AddExpenseCubit(
+          expenseRepository: context.read<ExpenseRepository>(),
+          authRepository: context.read<AuthRepository>(),
+        );
+        if (widget.expense != null && widget.category != null) {
+          cubit.loadForEdit(widget.expense!, widget.category!);
+        }
+        return cubit;
+      },
       child: Builder(
         builder: (context) {
           final cubit = context.watch<AddExpenseCubit>();
@@ -53,7 +76,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
-              title: const Text('Add Expense'),
+              title: Text(widget.expense != null ? 'Edit Expense' : 'Add Expense'),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new, size: 20),
                 onPressed: () => Navigator.pop(context),
@@ -63,8 +86,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               listener: (context, state) {
                 if (state is AddExpenseSuccess) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Expense added successfully'),
+                    SnackBar(
+                      content: Text(widget.expense != null
+                          ? 'Expense updated successfully'
+                          : 'Expense added successfully'),
                       backgroundColor: AppColors.success,
                     ),
                   );
@@ -251,7 +276,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         BlocBuilder<AddExpenseCubit, AddExpenseState>(
                           builder: (context, state) {
                             return PrimaryButton(
-                              label: 'Add Expense',
+                              label: widget.expense != null ? 'Save Changes' : 'Add Expense',
                               isLoading: state is AddExpenseLoading,
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {

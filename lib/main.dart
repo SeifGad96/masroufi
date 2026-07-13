@@ -12,6 +12,9 @@ import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/register_screen.dart';
 import 'features/categories/data/repositories/category_repository.dart';
 import 'features/expenses/data/repositories/expense_repository.dart';
+import 'features/dashboard/data/repositories/dashboard_repository.dart';
+import 'features/dashboard/presentation/cubit/dashboard_cubit.dart';
+import 'features/breakdown/presentation/cubit/breakdown_cubit.dart';
 import 'features/shell/presentation/screens/shell_screen.dart';
 import 'features/shell/presentation/screens/splash_screen.dart';
 
@@ -65,11 +68,29 @@ class MasroufiApp extends StatelessWidget {
             categoryRepository: ctx.read<CategoryRepository>(),
           ),
         ),
+        RepositoryProvider(
+          create: (ctx) => DashboardRepository(
+            expenseRepository: ctx.read<ExpenseRepository>(),
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (ctx) => AuthCubit(
+              authRepository: ctx.read<AuthRepository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (ctx) => DashboardCubit(
+              repository: ctx.read<DashboardRepository>(),
+              authRepository: ctx.read<AuthRepository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (ctx) => BreakdownCubit(
+              expenseRepository: ctx.read<ExpenseRepository>(),
+              categoryRepository: ctx.read<CategoryRepository>(),
               authRepository: ctx.read<AuthRepository>(),
             ),
           ),

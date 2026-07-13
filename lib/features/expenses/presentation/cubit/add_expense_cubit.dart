@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:masroufi/features/auth/data/repositories/auth_repository.dart';
 import 'package:masroufi/features/categories/data/models/category_model.dart';
+import 'package:masroufi/features/expenses/data/models/expense_model.dart';
 import 'package:masroufi/features/expenses/data/repositories/expense_repository.dart';
 import 'package:masroufi/features/expenses/presentation/cubit/add_expense_state.dart';
 
@@ -10,6 +11,7 @@ class AddExpenseCubit extends Cubit<AddExpenseState> {
 
   CategoryModel? selectedCategory;
   DateTime selectedDate = DateTime.now();
+  ExpenseModel? existingExpense;
 
   AddExpenseCubit({
     required ExpenseRepository expenseRepository,
@@ -17,6 +19,13 @@ class AddExpenseCubit extends Cubit<AddExpenseState> {
   })  : _expenseRepository = expenseRepository,
         _authRepository = authRepository,
         super(const AddExpenseInitial());
+
+  void loadForEdit(ExpenseModel expense, CategoryModel category) {
+    existingExpense = expense;
+    selectedCategory = category;
+    selectedDate = expense.date;
+    emit(const AddExpenseInitial());
+  }
 
   void selectCategory(CategoryModel category) {
     selectedCategory = category;
@@ -54,13 +63,24 @@ class AddExpenseCubit extends Cubit<AddExpenseState> {
     emit(const AddExpenseLoading());
 
     try {
-      await _expenseRepository.addExpense(
-        uid: uid,
-        amount: amount,
-        categoryId: selectedCategory!.id,
-        date: selectedDate,
-        note: note?.trim().isEmpty == true ? null : note?.trim(),
-      );
+      if (existingExpense != null) {
+        final updated = existingExpense!.copyWith(
+          amount: amount,
+          categoryId: selectedCategory!.id,
+          date: selectedDate,
+          note: note?.trim().isEmpty == true ? null : note?.trim(),
+          synced: false,
+        );
+        await _expenseRepository.updateExpense(uid: uid, expense: updated);
+      } else {
+        await _expenseRepository.addExpense(
+          uid: uid,
+          amount: amount,
+          categoryId: selectedCategory!.id,
+          date: selectedDate,
+          note: note?.trim().isEmpty == true ? null : note?.trim(),
+        );
+      }
       emit(const AddExpenseSuccess());
     } catch (e) {
       emit(AddExpenseError(e.toString()));
