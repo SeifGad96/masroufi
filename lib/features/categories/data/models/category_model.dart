@@ -51,7 +51,6 @@ class CategoryModel {
 
   // ── Starter categories ────────────────────────────────────────────────────
 
-  /// The 7 starter categories seeded on account creation (PRD §8.2b).
   static List<Map<String, dynamic>> get starterCategories => [
         {'name': 'Food',           'colorIndex': 0},
         {'name': 'Transportation', 'colorIndex': 1},

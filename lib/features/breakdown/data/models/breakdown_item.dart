@@ -7,6 +7,7 @@ class BreakdownItem extends Equatable {
   final Color categoryColor;
   final double totalAmount;
   final double percentage;
+  final double? budgetLimit;
 
   const BreakdownItem({
     required this.categoryId,
@@ -14,8 +15,16 @@ class BreakdownItem extends Equatable {
     required this.categoryColor,
     required this.totalAmount,
     required this.percentage,
+    this.budgetLimit,
   });
 
   @override
-  List<Object?> get props => [categoryId, categoryName, categoryColor, totalAmount, percentage];
+  List<Object?> get props => [
+        categoryId,
+        categoryName,
+        categoryColor,
+        totalAmount,
+        percentage,
+        budgetLimit,
+      ];
 }

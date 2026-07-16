@@ -15,6 +15,7 @@ import 'features/expenses/data/repositories/expense_repository.dart';
 import 'features/dashboard/data/repositories/dashboard_repository.dart';
 import 'features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'features/breakdown/presentation/cubit/breakdown_cubit.dart';
+import 'features/breakdown/data/repositories/budget_repository.dart';
 import 'features/shell/presentation/screens/shell_screen.dart';
 import 'features/shell/presentation/screens/splash_screen.dart';
 
@@ -73,6 +74,7 @@ class MasroufiApp extends StatelessWidget {
             expenseRepository: ctx.read<ExpenseRepository>(),
           ),
         ),
+        RepositoryProvider(create: (_) => BudgetRepository()),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -92,6 +94,7 @@ class MasroufiApp extends StatelessWidget {
               expenseRepository: ctx.read<ExpenseRepository>(),
               categoryRepository: ctx.read<CategoryRepository>(),
               authRepository: ctx.read<AuthRepository>(),
+              budgetRepository: ctx.read<BudgetRepository>(),
             ),
           ),
         ],

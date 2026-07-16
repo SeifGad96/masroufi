@@ -4,6 +4,7 @@ import 'package:masroufi/core/constants/app_colors.dart';
 import 'package:masroufi/core/constants/app_text_styles.dart';
 import 'package:masroufi/features/breakdown/presentation/cubit/breakdown_cubit.dart';
 import 'package:masroufi/features/breakdown/presentation/cubit/breakdown_state.dart';
+import 'package:masroufi/features/breakdown/data/models/breakdown_item.dart';
 
 class BreakdownScreen extends StatefulWidget {
   const BreakdownScreen({super.key});
@@ -136,7 +137,15 @@ class _BreakdownScreenState extends State<BreakdownScreen> {
                   }
 
                   final item = items[index - 1];
-                  final widthFactor = (item.percentage / 100).clamp(0.0, 1.0);
+                  final hasBudget = item.budgetLimit != null && item.budgetLimit! > 0;
+                  final budgetLimit = item.budgetLimit ?? 0.0;
+                  final isExceeded = hasBudget && item.totalAmount > budgetLimit;
+
+                  final progressFactor = hasBudget
+                      ? (item.totalAmount / budgetLimit).clamp(0.0, 1.0)
+                      : (item.percentage / 100).clamp(0.0, 1.0);
+
+                  final barColor = isExceeded ? AppColors.error : item.categoryColor;
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
@@ -160,20 +169,76 @@ class _BreakdownScreenState extends State<BreakdownScreen> {
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
-                                  child: Text(
-                                    item.categoryName,
-                                    style: AppTextStyles.titleMedium.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.categoryName,
+                                        style: AppTextStyles.titleMedium.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      if (hasBudget) ...[
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          'Budget: ${budgetLimit.toStringAsFixed(2)}',
+                                          style: AppTextStyles.labelSmall.copyWith(
+                                            color: isExceeded ? AppColors.error : AppColors.textSecondary,
+                                            fontWeight: isExceeded ? FontWeight.bold : FontWeight.normal,
+                                          ),
+                                        ),
+                                      ] else ...[
+                                        const SizedBox(height: 2),
+                                        InkWell(
+                                          onTap: () => _showBudgetDialog(context, item),
+                                          child: Text(
+                                            'Set budget limit',
+                                            style: AppTextStyles.labelSmall.copyWith(
+                                              color: AppColors.accent,
+                                              decoration: TextDecoration.underline,
+                                            ),
+                                          ),
+                                        ),
+                                      ]
+                                    ],
                                   ),
                                 ),
-                                Text(
-                                  item.totalAmount.toStringAsFixed(2),
-                                  style: AppTextStyles.amountMedium.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      item.totalAmount.toStringAsFixed(2),
+                                      style: AppTextStyles.amountMedium.copyWith(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    if (hasBudget) ...[
+                                      const SizedBox(height: 2),
+                                      GestureDetector(
+                                        onTap: () => _showBudgetDialog(context, item),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(
+                                              Icons.edit_outlined,
+                                              size: 12,
+                                              color: AppColors.textSecondary,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              'Edit limit',
+                                              style: AppTextStyles.labelSmall.copyWith(
+                                                color: AppColors.textSecondary,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ]
+                                  ],
                                 ),
                               ],
                             ),
@@ -187,10 +252,10 @@ class _BreakdownScreenState extends State<BreakdownScreen> {
                               ),
                               child: FractionallySizedBox(
                                 alignment: Alignment.centerLeft,
-                                widthFactor: widthFactor,
+                                widthFactor: progressFactor,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: item.categoryColor,
+                                    color: barColor,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
@@ -198,15 +263,26 @@ class _BreakdownScreenState extends State<BreakdownScreen> {
                             ),
                             const SizedBox(height: 8),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  '${item.percentage.toStringAsFixed(1)}%',
+                                  '${item.percentage.toStringAsFixed(1)}% of total spent',
                                   style: AppTextStyles.labelSmall.copyWith(
-                                    color: AppColors.textSecondary,
-                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textMuted,
+                                    fontSize: 10,
                                   ),
                                 ),
+                                if (hasBudget)
+                                  Text(
+                                    isExceeded
+                                        ? 'Exceeded by ${(item.totalAmount - budgetLimit).toStringAsFixed(2)}!'
+                                        : '${((item.totalAmount / budgetLimit) * 100).toStringAsFixed(1)}% of budget',
+                                    style: AppTextStyles.labelSmall.copyWith(
+                                      color: isExceeded ? AppColors.error : AppColors.success,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 10,
+                                    ),
+                                  ),
                               ],
                             ),
                           ],
@@ -222,6 +298,85 @@ class _BreakdownScreenState extends State<BreakdownScreen> {
           },
         ),
       ),
+    );
+  }
+
+  void _showBudgetDialog(BuildContext context, BreakdownItem item) {
+    final controller = TextEditingController(
+      text: item.budgetLimit != null ? item.budgetLimit!.toStringAsFixed(2) : '',
+    );
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: AppColors.surface,
+          title: Text(
+            'Set Budget for ${item.categoryName}',
+            style: AppTextStyles.titleLarge,
+          ),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: controller,
+              autofocus: true,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              style: AppTextStyles.bodyLarge,
+              decoration: const InputDecoration(
+                labelText: 'Monthly Budget Limit',
+                hintText: '0.00',
+                prefixIcon: Icon(Icons.money_rounded),
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter a limit';
+                }
+                final limit = double.tryParse(value);
+                if (limit == null || limit < 0) {
+                  return 'Please enter a valid amount';
+                }
+                return null;
+              },
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: [
+            if (item.budgetLimit != null)
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(dialogContext);
+                  await context.read<BreakdownCubit>().removeCategoryBudget(item.categoryId);
+                },
+                style: TextButton.styleFrom(foregroundColor: AppColors.error),
+                child: const Text('Remove'),
+              )
+            else
+              const SizedBox.shrink(),
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.textSecondary),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final limit = double.tryParse(controller.text) ?? 0.0;
+                      Navigator.pop(dialogContext);
+                      await context.read<BreakdownCubit>().updateCategoryBudget(item.categoryId, limit);
+                    }
+                  },
+                  child: const Text('Save'),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

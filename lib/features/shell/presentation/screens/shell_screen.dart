@@ -26,7 +26,6 @@ class _ShellScreenState extends State<ShellScreen> {
     DashboardScreen(),
     ExpenseHistoryScreen(),
     BreakdownScreen(),
-    _NewsPlaceholder(),
   ];
 
   @override
@@ -100,11 +99,6 @@ class _AppBottomNav extends StatelessWidget {
               activeIcon: Icon(Icons.pie_chart_rounded),
               label: 'Breakdown',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.newspaper_outlined),
-              activeIcon: Icon(Icons.newspaper_rounded),
-              label: 'News',
-            ),
           ],
         ),
       ),
@@ -112,61 +106,4 @@ class _AppBottomNav extends StatelessWidget {
   }
 }
 
-// ── Placeholder screens (will be replaced in M2–M5) ──────────────────────────
 
-
-
-class _NewsPlaceholder extends StatelessWidget {
-  const _NewsPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const _PlaceholderScreen(
-      icon: Icons.newspaper_rounded,
-      title: 'News',
-      subtitle: 'Coming in Milestone 5',
-    );
-  }
-}
-
-class _PlaceholderScreen extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  const _PlaceholderScreen({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.surfaceVariant,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Icon(icon, color: AppColors.accent, size: 40),
-            ),
-            const SizedBox(height: 20),
-            Text(title, style: AppTextStyles.headlineMedium),
-            const SizedBox(height: 8),
-            Text(subtitle, style: AppTextStyles.bodyMedium),
-          ],
-        ),
-      ),
-    );
-  }
-}
