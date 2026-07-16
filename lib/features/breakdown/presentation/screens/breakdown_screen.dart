@@ -363,6 +363,9 @@ class _BreakdownScreenState extends State<BreakdownScreen> {
                   ),
                 ),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(64, 40),
+                  ),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
                       final limit = double.tryParse(controller.text) ?? 0.0;
