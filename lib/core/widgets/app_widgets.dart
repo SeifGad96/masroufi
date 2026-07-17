@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:masroufi/core/constants/app_colors.dart';
 import 'package:masroufi/core/constants/app_text_styles.dart';
 
-/// A full-width primary action button with loading state.
+
 class PrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -40,7 +40,7 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
-/// Branded text field with floating label.
+
 class AppTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;

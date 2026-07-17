@@ -354,6 +354,7 @@ class _BreakdownScreenState extends State<BreakdownScreen> {
             else
               const SizedBox.shrink(),
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(dialogContext),

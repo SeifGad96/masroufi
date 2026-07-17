@@ -6,9 +6,9 @@ import 'package:masroufi/core/constants/app_text_styles.dart';
 import 'package:masroufi/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:masroufi/features/auth/presentation/cubit/auth_state.dart';
 import 'package:masroufi/features/categories/data/models/category_model.dart';
-import 'package:masroufi/features/categories/data/repositories/category_repository.dart';
+import 'package:masroufi/features/categories/data/data_sources/category_data_source.dart';
 import 'package:masroufi/features/expenses/data/models/expense_model.dart';
-import 'package:masroufi/features/expenses/data/repositories/expense_repository.dart';
+import 'package:masroufi/features/expenses/data/data_sources/expense_data_source.dart';
 import 'package:masroufi/features/expenses/presentation/screens/add_expense_screen.dart';
 
 abstract class HistoryItem {}
@@ -68,7 +68,7 @@ class ExpenseHistoryScreen extends StatelessWidget {
         title: const Text('Expenses'),
       ),
       body: StreamBuilder<List<CategoryModel>>(
-        stream: context.read<CategoryRepository>().watchCategories(uid),
+        stream: context.read<CategoryDataSource>().watchCategories(uid),
         builder: (context, catSnapshot) {
           if (catSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -80,7 +80,7 @@ class ExpenseHistoryScreen extends StatelessWidget {
           final catMap = {for (final c in categories) c.id: c};
 
           return StreamBuilder<List<ExpenseModel>>(
-            stream: context.read<ExpenseRepository>().watchExpenses(uid),
+            stream: context.read<ExpenseDataSource>().watchExpenses(uid),
             builder: (context, expSnapshot) {
               if (expSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -210,7 +210,7 @@ class ExpenseHistoryScreen extends StatelessWidget {
                           );
                         },
                         onDismissed: (direction) async {
-                          await context.read<ExpenseRepository>().deleteExpense(
+                          await context.read<ExpenseDataSource>().deleteExpense(
                             uid: uid,
                             expenseId: expense.id,
                           );

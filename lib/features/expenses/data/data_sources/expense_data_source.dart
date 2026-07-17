@@ -4,21 +4,21 @@ import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 import 'package:masroufi/features/expenses/data/models/expense_model.dart';
 
-class ExpenseRepository {
+class ExpenseDataSource {
   final FirebaseFirestore _firestore;
   final Box _pendingBox;
 
-  ExpenseRepository({
+  ExpenseDataSource({
     FirebaseFirestore? firestore,
     Box? pendingBox,
   })  : _firestore = firestore ?? FirebaseFirestore.instance,
         _pendingBox = pendingBox ?? Hive.box('pending_expenses');
 
-  // ── Create Operation ──────────────────────────────────────────────────────
+  
 
-  /// Adds an expense: Writes to Hive immediately, then fire-and-forgets
-  /// the Firestore push in the background. Returns as soon as the local
-  /// write completes — the UI never blocks on network.
+  
+  
+  
   Future<ExpenseModel> addExpense({
     required String uid,
     required double amount,
@@ -38,18 +38,18 @@ class ExpenseRepository {
       synced: false,
     );
 
-    // 1. Write to local Hive pending box — instant UX feedback
+    
     try {
       await _pendingBox.put(id, expense.toHiveMap());
     } catch (e) {
       debugPrint('Hive write failed: $e');
     }
 
-    // 2. Fire-and-forget Firestore push.
-    //    Firestore .set() does NOT throw when offline — it hangs until
-    //    connectivity returns. Awaiting it would cause the spinner to
-    //    spin forever. Instead, we push in the background and clean up
-    //    the Hive entry on success.
+    
+    
+    
+    
+    
     _firestore
         .collection('users')
         .doc(uid)
@@ -64,9 +64,9 @@ class ExpenseRepository {
     return expense;
   }
 
-  // ── Read Operations ───────────────────────────────────────────────────────
+  
 
-  /// Streams expenses from Firestore ordered by date descending.
+  
   Stream<List<ExpenseModel>> watchExpenses(String uid) {
     return _firestore
         .collection('users')
@@ -77,7 +77,7 @@ class ExpenseRepository {
         .map((snap) => snap.docs.map(ExpenseModel.fromFirestore).toList());
   }
 
-  /// Gets a list of expenses from Firestore once.
+  
   Future<List<ExpenseModel>> getExpenses(String uid) async {
     final snap = await _firestore
         .collection('users')
@@ -88,7 +88,7 @@ class ExpenseRepository {
     return snap.docs.map(ExpenseModel.fromFirestore).toList();
   }
 
-  /// Gets all unsynced expenses currently stored in the Hive box.
+  
   List<ExpenseModel> getUnsyncedExpenses() {
     return _pendingBox.values
         .map((val) => ExpenseModel.fromHiveMap(Map<dynamic, dynamic>.from(val as Map))
@@ -96,19 +96,19 @@ class ExpenseRepository {
         .toList();
   }
 
-  /// Updates an existing expense. Fire-and-forget Firestore update.
+  
   Future<ExpenseModel> updateExpense({
     required String uid,
     required ExpenseModel expense,
   }) async {
-    // 1. Update Hive entry if it exists in pending box or queue it as unsynced
+    
     try {
       await _pendingBox.put(expense.id, expense.toHiveMap());
     } catch (e) {
       debugPrint('Hive write failed: $e');
     }
 
-    // 2. Fire-and-forget Firestore update in the background.
+    
     _firestore
         .collection('users')
         .doc(uid)
@@ -123,19 +123,19 @@ class ExpenseRepository {
     return expense;
   }
 
-  /// Deletes an expense. Fire-and-forget Firestore delete.
+  
   Future<void> deleteExpense({
     required String uid,
     required String expenseId,
   }) async {
-    // 1. Delete from Hive pending box (if present)
+    
     try {
       await _pendingBox.delete(expenseId);
     } catch (e) {
       debugPrint('Hive delete failed: $e');
     }
 
-    // 2. Fire-and-forget Firestore delete.
+    
     _firestore
         .collection('users')
         .doc(uid)
@@ -147,8 +147,8 @@ class ExpenseRepository {
     });
   }
 
-  /// Gets aggregated spending for the current month, grouped by category.
-  /// Returns a list of Map objects containing categoryId, totalAmount, and percentage.
+  
+  
   Future<List<Map<String, dynamic>>> getMonthlyBreakdown(String uid) async {
     final now = DateTime.now();
     final startOfMonth = DateTime(now.year, now.month, 1);
@@ -180,10 +180,9 @@ class ExpenseRepository {
       };
     }).toList();
 
-    // Sort descending by totalAmount
+    
     breakdown.sort((a, b) => (b['totalAmount'] as double).compareTo(a['totalAmount'] as double));
 
     return breakdown;
   }
 }
-

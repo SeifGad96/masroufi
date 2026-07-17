@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:masroufi/core/constants/app_colors.dart';
 
-/// Represents a spending category (starter or user-defined custom).
-/// PRD §8.2b — up to 12 categories total, each auto-assigned a distinct color
-/// from the fixed 12-color palette.
+
+
+
 class CategoryModel {
   final String id;
   final String name;
   final String colorHex;
-  final int colorIndex; // 0–11, position in the fixed palette
+  final int colorIndex; 
   final bool isCustom;
   final DateTime createdAt;
 
@@ -21,13 +21,13 @@ class CategoryModel {
     required this.createdAt,
   });
 
-  // ── Color helpers ─────────────────────────────────────────────────────────
+  
 
-  /// Returns the [Color] for this category from the fixed palette.
-  /// Falls back to [AppColors.categoryColor] using [colorIndex].
+  
+  
   dynamic get color => AppColors.categoryPalette[colorIndex % 12];
 
-  // ── Firestore serialization ───────────────────────────────────────────────
+  
 
   factory CategoryModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -49,7 +49,7 @@ class CategoryModel {
         'createdAt': Timestamp.fromDate(createdAt),
       };
 
-  // ── Starter categories ────────────────────────────────────────────────────
+  
 
   static List<Map<String, dynamic>> get starterCategories => [
         {'name': 'Food',           'colorIndex': 0},
@@ -61,7 +61,7 @@ class CategoryModel {
         {'name': 'Other',          'colorIndex': 6},
       ];
 
-  // ── Utilities ─────────────────────────────────────────────────────────────
+  
 
   CategoryModel copyWith({
     String? id,

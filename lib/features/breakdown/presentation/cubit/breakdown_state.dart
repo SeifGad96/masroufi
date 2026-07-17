@@ -1,11 +1,7 @@
-import 'package:equatable/equatable.dart';
 import 'package:masroufi/features/breakdown/data/models/breakdown_item.dart';
 
-abstract class BreakdownState extends Equatable {
+abstract class BreakdownState {
   const BreakdownState();
-
-  @override
-  List<Object?> get props => [];
 }
 
 class BreakdownInitial extends BreakdownState {
@@ -24,16 +20,10 @@ class BreakdownLoaded extends BreakdownState {
     required this.items,
     required this.totalAmount,
   });
-
-  @override
-  List<Object?> get props => [items, totalAmount];
 }
 
 class BreakdownError extends BreakdownState {
   final String message;
 
   const BreakdownError(this.message);
-
-  @override
-  List<Object?> get props => [message];
 }

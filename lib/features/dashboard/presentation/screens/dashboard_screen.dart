@@ -85,7 +85,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Welcome header
+                    
                     Text(
                       'Welcome to مصروفي',
                       style: AppTextStyles.headlineMedium,
@@ -97,7 +97,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     const SizedBox(height: 28),
 
-                    // Today Summary Card (Full Width)
+                    
                     _SummaryCard(
                       title: 'Today',
                       amount: summary.todayTotal,
@@ -107,7 +107,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Side-by-side cards for Week & Month
+                    
                     Row(
                       children: [
                         Expanded(
@@ -131,7 +131,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     const SizedBox(height: 40),
 
-                    // Call to action / Empty state message if total is 0
+                    
                     if (summary.monthTotal == 0) ...[
                       Center(
                         child: Column(

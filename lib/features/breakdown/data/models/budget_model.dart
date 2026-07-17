@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 class BudgetModel extends Equatable {
   final String categoryId;
   final double limit;
-  final String month; // YYYY-MM
+  final String month; 
 
   const BudgetModel({
     required this.categoryId,

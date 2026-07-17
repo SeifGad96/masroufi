@@ -8,8 +8,8 @@ import 'package:masroufi/features/dashboard/presentation/cubit/dashboard_cubit.d
 import 'package:masroufi/features/breakdown/presentation/screens/breakdown_screen.dart';
 import 'package:masroufi/features/breakdown/presentation/cubit/breakdown_cubit.dart';
 
-/// Bottom-navigation shell that hosts the four main tabs.
-/// The News tab lives here as the single integration point per PRD §9.1.
+
+
 class ShellScreen extends StatefulWidget {
   const ShellScreen({super.key});
 
@@ -20,8 +20,8 @@ class ShellScreen extends StatefulWidget {
 class _ShellScreenState extends State<ShellScreen> {
   int _currentIndex = 0;
 
-  // Screens are created lazily on first visit using IndexedStack so that
-  // each tab's state is preserved across switches.
+  
+  
   static const List<Widget> _screens = [
     DashboardScreen(),
     ExpenseHistoryScreen(),
@@ -51,7 +51,7 @@ class _ShellScreenState extends State<ShellScreen> {
   }
 }
 
-// ── Bottom navigation bar ─────────────────────────────────────────────────────
+
 
 class _AppBottomNav extends StatelessWidget {
   final int currentIndex;

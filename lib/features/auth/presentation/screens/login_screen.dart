@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/constants/app_routes.dart';
-import '../../../../shared/widgets/app_widgets.dart';
+import '../../../../core/widgets/app_widgets.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -62,12 +62,12 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 60),
 
-                // ── Logo / brand ─────────────────────────────────────────
+                
                 _BrandHeader(),
 
                 const SizedBox(height: 48),
 
-                // ── Form ─────────────────────────────────────────────────
+                
                 Text('Welcome back', style: AppTextStyles.displayMedium),
                 const SizedBox(height: 6),
                 Text(
@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 24),
 
-                // ── Navigate to register ──────────────────────────────────
+                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// ── Brand header widget ───────────────────────────────────────────────────────
+
 
 class _BrandHeader extends StatelessWidget {
   @override

@@ -1,41 +1,41 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:masroufi/features/auth/data/repositories/auth_repository.dart';
+import 'package:masroufi/features/auth/data/data_sources/auth_data_source.dart';
 import 'package:masroufi/features/categories/data/models/category_model.dart';
 import 'package:masroufi/features/expenses/data/models/expense_model.dart';
-import 'package:masroufi/features/expenses/data/repositories/expense_repository.dart';
+import 'package:masroufi/features/expenses/data/data_sources/expense_data_source.dart';
 import 'package:masroufi/features/expenses/presentation/cubit/add_expense_state.dart';
 
 class AddExpenseCubit extends Cubit<AddExpenseState> {
-  final ExpenseRepository _expenseRepository;
-  final AuthRepository _authRepository;
+  final ExpenseDataSource _expenseDataSource;
+  final AuthDataSource _authDataSource;
 
   CategoryModel? selectedCategory;
   DateTime selectedDate = DateTime.now();
   ExpenseModel? existingExpense;
 
   AddExpenseCubit({
-    required ExpenseRepository expenseRepository,
-    required AuthRepository authRepository,
-  })  : _expenseRepository = expenseRepository,
-        _authRepository = authRepository,
+    required ExpenseDataSource expenseDataSource,
+    required AuthDataSource authDataSource,
+  })  : _expenseDataSource = expenseDataSource,
+        _authDataSource = authDataSource,
         super(const AddExpenseInitial());
 
   void loadForEdit(ExpenseModel expense, CategoryModel category) {
     existingExpense = expense;
     selectedCategory = category;
     selectedDate = expense.date;
-    emit(const AddExpenseInitial());
+    emit(AddExpenseInitial());
   }
 
   void selectCategory(CategoryModel category) {
     selectedCategory = category;
-    // Emit initial to trigger UI updates if necessary, or just keep state
-    emit(const AddExpenseInitial());
+    
+    emit(AddExpenseInitial());
   }
 
   void selectDate(DateTime date) {
     selectedDate = date;
-    emit(const AddExpenseInitial());
+    emit(AddExpenseInitial());
   }
 
   Future<void> submitExpense({
@@ -54,7 +54,7 @@ class AddExpenseCubit extends Cubit<AddExpenseState> {
       return;
     }
 
-    final uid = _authRepository.currentUser?.uid;
+    final uid = _authDataSource.currentUser?.uid;
     if (uid == null) {
       emit(const AddExpenseError('User is not authenticated'));
       return;
@@ -71,9 +71,9 @@ class AddExpenseCubit extends Cubit<AddExpenseState> {
           note: note?.trim().isEmpty == true ? null : note?.trim(),
           synced: false,
         );
-        await _expenseRepository.updateExpense(uid: uid, expense: updated);
+        await _expenseDataSource.updateExpense(uid: uid, expense: updated);
       } else {
-        await _expenseRepository.addExpense(
+        await _expenseDataSource.addExpense(
           uid: uid,
           amount: amount,
           categoryId: selectedCategory!.id,

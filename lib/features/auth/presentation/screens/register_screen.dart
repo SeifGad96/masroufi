@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/constants/app_routes.dart';
-import '../../../../shared/widgets/app_widgets.dart';
+import '../../../../core/widgets/app_widgets.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -67,7 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 const SizedBox(height: 48),
 
-                // ── Back button ───────────────────────────────────────────
+                
                 IconButton(
                   onPressed: () => Navigator.pushReplacementNamed(
                       context, AppRoutes.login),
@@ -79,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: 32),
 
-                // ── Header ────────────────────────────────────────────────
+                
                 Text('Create account', style: AppTextStyles.displayMedium),
                 const SizedBox(height: 6),
                 Text(
@@ -89,7 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: 32),
 
-                // ── Form ─────────────────────────────────────────────────
+                
                 Form(
                   key: _formKey,
                   child: Column(
@@ -192,7 +192,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: 24),
 
-                // ── Navigate to login ─────────────────────────────────────
+                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

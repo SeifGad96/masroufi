@@ -22,7 +22,7 @@ class AppTheme {
         onError: Colors.white,
       ),
 
-      // App bar
+      
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -40,7 +40,7 @@ class AppTheme {
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
 
-      // Bottom navigation bar
+      
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.surface,
         selectedItemColor: AppColors.accent,
@@ -51,7 +51,7 @@ class AppTheme {
         elevation: 0,
       ),
 
-      // Card
+      
       cardTheme: CardThemeData(
         color: AppColors.surface,
         elevation: 0,
@@ -62,7 +62,7 @@ class AppTheme {
         margin: EdgeInsets.zero,
       ),
 
-      // Input decoration
+      
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surfaceVariant,
@@ -102,7 +102,7 @@ class AppTheme {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
 
-      // Elevated button
+      
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.accent,
@@ -120,7 +120,7 @@ class AppTheme {
         ),
       ),
 
-      // Text button
+      
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.accent,
@@ -131,14 +131,14 @@ class AppTheme {
         ),
       ),
 
-      // Divider
+      
       dividerTheme: const DividerThemeData(
         color: AppColors.border,
         thickness: 1,
         space: 0,
       ),
 
-      // Chip
+      
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.surfaceVariant,
         selectedColor: AppColors.accent.withValues(alpha: 0.2),
@@ -150,7 +150,7 @@ class AppTheme {
         ),
       ),
 
-      // Floating action button
+      
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.accent,
         foregroundColor: Colors.white,
@@ -158,7 +158,7 @@ class AppTheme {
         shape: CircleBorder(),
       ),
 
-      // Snackbar
+      
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.surfaceVariant,
         contentTextStyle: GoogleFonts.inter(color: AppColors.textPrimary),
@@ -166,7 +166,7 @@ class AppTheme {
         behavior: SnackBarBehavior.floating,
       ),
 
-      // Dialog
+      
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

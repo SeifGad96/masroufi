@@ -19,7 +19,7 @@ class ExpenseModel {
     this.synced = false,
   });
 
-  // ── Firestore Serialization ───────────────────────────────────────────────
+  
 
   factory ExpenseModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -45,7 +45,7 @@ class ExpenseModel {
     };
   }
 
-  // ── Hive Map Serialization ───────────────────────────────────────────────
+  
 
   factory ExpenseModel.fromHiveMap(Map<dynamic, dynamic> map) {
     return ExpenseModel(
@@ -71,7 +71,7 @@ class ExpenseModel {
     };
   }
 
-  // ── Utilities ─────────────────────────────────────────────────────────────
+  
 
   ExpenseModel copyWith({
     String? id,

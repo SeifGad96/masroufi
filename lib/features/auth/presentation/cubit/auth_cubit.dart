@@ -1,25 +1,25 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/repositories/auth_repository.dart';
+import '../../data/data_sources/auth_data_source.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  final AuthRepository _authRepository;
+  final AuthDataSource _authDataSource;
   StreamSubscription<User?>? _authSubscription;
 
-  AuthCubit({required AuthRepository authRepository})
-      : _authRepository = authRepository,
+  AuthCubit({required AuthDataSource authDataSource})
+      : _authDataSource = authDataSource,
         super(const AuthInitial()) {
     _listenToAuthChanges();
   }
 
-  // ── Session persistence ───────────────────────────────────────────────────
+  
 
-  /// Subscribes to Firebase authStateChanges so the app auto-restores sessions
-  /// on relaunch without any extra call (PRD §8.1).
+  
+  
   void _listenToAuthChanges() {
-    _authSubscription = _authRepository.authStateChanges.listen(
+    _authSubscription = _authDataSource.authStateChanges.listen(
       (user) {
         if (user != null) {
           emit(AuthAuthenticated(user));
@@ -31,7 +31,7 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  // ── Sign up ───────────────────────────────────────────────────────────────
+  
 
   Future<void> signUp({
     required String email,
@@ -39,8 +39,8 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(const AuthLoading());
     try {
-      await _authRepository.signUp(email: email, password: password);
-      // _listenToAuthChanges will emit AuthAuthenticated automatically
+      await _authDataSource.signUp(email: email, password: password);
+      
     } on FirebaseAuthException catch (e) {
       emit(AuthError(_friendlyMessage(e)));
     } catch (e) {
@@ -48,7 +48,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // ── Sign in ───────────────────────────────────────────────────────────────
+  
 
   Future<void> signIn({
     required String email,
@@ -56,8 +56,8 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(const AuthLoading());
     try {
-      await _authRepository.signIn(email: email, password: password);
-      // _listenToAuthChanges will emit AuthAuthenticated automatically
+      await _authDataSource.signIn(email: email, password: password);
+      
     } on FirebaseAuthException catch (e) {
       emit(AuthError(_friendlyMessage(e)));
     } catch (e) {
@@ -65,14 +65,14 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // ── Sign out ──────────────────────────────────────────────────────────────
+  
 
   Future<void> signOut() async {
-    await _authRepository.signOut();
-    // _listenToAuthChanges will emit AuthUnauthenticated automatically
+    await _authDataSource.signOut();
+    
   }
 
-  // ── Error messages ────────────────────────────────────────────────────────
+  
 
   String _friendlyMessage(FirebaseAuthException e) {
     switch (e.code) {

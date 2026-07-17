@@ -3,16 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:masroufi/core/constants/app_colors.dart';
 import 'package:masroufi/core/constants/app_text_styles.dart';
-import 'package:masroufi/features/auth/data/repositories/auth_repository.dart';
+import 'package:masroufi/features/auth/data/data_sources/auth_data_source.dart';
 import 'package:masroufi/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:masroufi/features/auth/presentation/cubit/auth_state.dart';
 import 'package:masroufi/features/categories/data/models/category_model.dart';
-import 'package:masroufi/features/categories/data/repositories/category_repository.dart';
-import 'package:masroufi/features/expenses/data/repositories/expense_repository.dart';
+import 'package:masroufi/features/categories/data/data_sources/category_data_source.dart';
+import 'package:masroufi/features/expenses/data/data_sources/expense_data_source.dart';
 import 'package:masroufi/features/expenses/data/models/expense_model.dart';
 import 'package:masroufi/features/expenses/presentation/cubit/add_expense_cubit.dart';
 import 'package:masroufi/features/expenses/presentation/cubit/add_expense_state.dart';
-import 'package:masroufi/shared/widgets/app_widgets.dart';
+
+import '../../../../core/widgets/app_widgets.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final ExpenseModel? expense;
@@ -61,8 +62,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     return BlocProvider(
       create: (context) {
         final cubit = AddExpenseCubit(
-          expenseRepository: context.read<ExpenseRepository>(),
-          authRepository: context.read<AuthRepository>(),
+          expenseDataSource: context.read<ExpenseDataSource>(),
+          authDataSource: context.read<AuthDataSource>(),
         );
         if (widget.expense != null && widget.category != null) {
           cubit.loadForEdit(widget.expense!, widget.category!);
@@ -111,7 +112,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Amount input (with autofocus)
+                        
                         AppTextField(
                           controller: _amountController,
                           label: 'Amount',
@@ -134,7 +135,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         ),
                         const SizedBox(height: 24),
 
-                        // Category label
+                        
                         Text(
                           'Category',
                           style: AppTextStyles.titleMedium.copyWith(
@@ -143,9 +144,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Category list stream builder
+                        
                         StreamBuilder<List<CategoryModel>>(
-                          stream: context.read<CategoryRepository>().watchCategories(uid),
+                          stream: context.read<CategoryDataSource>().watchCategories(uid),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
                               return const SizedBox(
@@ -201,7 +202,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         ),
                         const SizedBox(height: 24),
 
-                        // Date label
+                        
                         Text(
                           'Date',
                           style: AppTextStyles.titleMedium.copyWith(
@@ -210,7 +211,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Date picker row
+                        
                         InkWell(
                           onTap: () async {
                             final pickedDate = await showDatePicker(
@@ -260,7 +261,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         ),
                         const SizedBox(height: 24),
 
-                        // Note field
+                        
                         AppTextField(
                           controller: _noteController,
                           label: 'Note (Optional)',
@@ -272,7 +273,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         ),
                         const SizedBox(height: 40),
 
-                        // Submit Button
+                        
                         BlocBuilder<AddExpenseCubit, AddExpenseState>(
                           builder: (context, state) {
                             return PrimaryButton(

@@ -3,27 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:masroufi/core/constants/app_colors.dart';
 import 'package:masroufi/features/categories/data/models/category_model.dart';
 
-/// Handles all Firestore operations for categories.
-/// PRD §8.2b — categories live at users/{uid}/categories/
-class CategoryRepository {
+
+
+class CategoryDataSource {
   final FirebaseFirestore _firestore;
 
-  CategoryRepository({FirebaseFirestore? firestore})
+  CategoryDataSource({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
-  // ── Collection reference ──────────────────────────────────────────────────
+  
 
   CollectionReference<Map<String, dynamic>> _categoriesRef(String uid) =>
       _firestore.collection('users').doc(uid).collection('categories');
 
-  // ── Seeding ───────────────────────────────────────────────────────────────
+  
 
-  /// Seeds the 7 starter categories for a newly created account.
-  /// Runs inside a batched write for atomicity.
-  /// No-ops if categories already exist (idempotent).
+  
+  
+  
   Future<void> seedStarterCategories(String uid) async {
     final existing = await _categoriesRef(uid).limit(1).get();
-    if (existing.docs.isNotEmpty) return; // already seeded
+    if (existing.docs.isNotEmpty) return; 
 
     final batch = _firestore.batch();
     final now = DateTime.now();
@@ -44,9 +44,9 @@ class CategoryRepository {
     await batch.commit();
   }
 
-  // ── CRUD ──────────────────────────────────────────────────────────────────
+  
 
-  /// Returns a real-time stream of all categories for [uid], sorted by colorIndex.
+  
   Stream<List<CategoryModel>> watchCategories(String uid) {
     return _categoriesRef(uid)
         .orderBy('colorIndex')
@@ -54,15 +54,15 @@ class CategoryRepository {
         .map((snap) => snap.docs.map(CategoryModel.fromFirestore).toList());
   }
 
-  /// Fetches all categories once.
+  
   Future<List<CategoryModel>> getCategories(String uid) async {
     final snap =
         await _categoriesRef(uid).orderBy('colorIndex').get();
     return snap.docs.map(CategoryModel.fromFirestore).toList();
   }
 
-  /// Adds a new custom category. Auto-assigns the next unused color index.
-  /// Throws [StateError] if the 12-category cap is already reached.
+  
+  
   Future<CategoryModel> addCustomCategory({
     required String uid,
     required String name,
@@ -103,7 +103,7 @@ class CategoryRepository {
     );
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
+  
 
   String _colorToHex(Color color) {
     final r = color.r.toInt().toRadixString(16).padLeft(2, '0');
